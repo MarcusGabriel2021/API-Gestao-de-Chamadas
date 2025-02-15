@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class HomeController {
 
     @GetMapping("")
-    public String home() { return "<h1> Home </h1>"; }
+    public String home() {
+        return "<h1> Home </h1>";
+    }
 
 }

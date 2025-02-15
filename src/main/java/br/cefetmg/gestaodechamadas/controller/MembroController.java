@@ -1,31 +1,51 @@
 package br.cefetmg.gestaodechamadas.controller;
 
 import br.cefetmg.gestaodechamadas.model.Membro;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import br.cefetmg.gestaodechamadas.service.MembroService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "api/v1/membro")
+@RequestMapping("api/v1/membro")
+@CrossOrigin(origins = "http://localhost:3000")
 public class MembroController {
 
-    private static long nextId = 1;
-    private static List listaDeMembros = new ArrayList();
+    @Autowired
+    private final MembroService membroService;
 
-    @PostMapping("/")
-    public Membro inserir(@RequestBody Membro membro) {
-
-        membro.setId(nextId);
-        membro.setNome(membro.getNome());
-        nextId++;
-        listaDeMembros.add(membro);
-        System.out.println(membro);
-        return membro;
-
+    public MembroController(MembroService membroService) {
+        this.membroService = membroService;
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Membro> getById(@PathVariable Long id) {
+        return ResponseEntity.ok().body(membroService.getById(id));
+    }
+
+    @GetMapping({"", "/"})
+    public ResponseEntity<List<Membro>> getAll() {
+        return ResponseEntity.ok().body(membroService.getAll());
+    }
+
+    @PostMapping({"", "/"})
+    public ResponseEntity<Membro> create(@Valid @RequestBody Membro membro) {
+        membro = membroService.create(membro);
+        return ResponseEntity.ok().body(membro);
+    }
+
+    @PutMapping({"", "/"})
+    public ResponseEntity<Membro> update(@Valid @RequestBody Membro membro) {
+        membro = membroService.update(membro);
+        return ResponseEntity.ok().body(membro);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Membro> delete(@PathVariable Long id) {
+        Membro membro = membroService.delete(id);
+        return ResponseEntity.ok().body(membro);
+    }
 }
